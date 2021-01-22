@@ -77,6 +77,11 @@ void Clock::Show(boolean clear_background, boolean mix_colors){
   strip->show();  
 }
 
+void Clock::Clear(){
+  if(strip == NULL) return;
+  strip->clear();
+}
+
 void Clock::SetTimeOffset(int time_offset){
   timeClient.setTimeOffset(time_offset);
   timeClient.updateTime();

@@ -207,6 +207,7 @@ void loop() {
   // Handle web server
   server.handleClient();
   fast=false;
+  clock.Clear(); 
   
   if(clock.getHourInt()>=22 || clock.getHourInt()<6) strip.setBrightness(cs.settings.brightness_night);
   else strip.setBrightness(cs.settings.brightness);
@@ -228,7 +229,7 @@ void loop() {
     efx_spike.Show(); delay(10); fast=true;
   // effect by the guarters
   }else{
-    efx_spike.Reset(); 
+    efx_spike.Reset();
     if( clock.getMinsInt() == 15 && clock.getSecsInt()<2 || clock.getMinsInt() == 30 && clock.getSecsInt()<4 || clock.getMinsInt() == 45 && clock.getSecsInt()<6){
       efx_spiral.Show(); delay(10); fast=true;
     }else{
