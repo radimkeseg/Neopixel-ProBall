@@ -214,15 +214,6 @@ void loop() {
 
   //animate
   if( cs.settings.animate ) { efx_rainbow.Show(); delay(10); fast=true; } 
-
-  //effect by alarm
-  if(cs.settings.ALARM_SWITCH)
-  if(clock.getHourInt() == cs.settings.alarmHour && clock.getMinsInt() == cs.settings.alarmMins){
-    efx_alarm.Show(); delay(10); fast=true;
-  }else{
-    efx_alarm.Reset();
-  }
-  
   
   // effect by the full hour
   if( clock.getMinsInt() == 0 && clock.getSecsInt()<20){
@@ -236,6 +227,15 @@ void loop() {
       efx_spiral.Reset();
     }
   }  
+
+  //effect by alarm
+  if(cs.settings.ALARM_SWITCH)
+  if(clock.getHourInt() == cs.settings.alarmHour && clock.getMinsInt() == cs.settings.alarmMins){
+    efx_alarm.Show(); delay(10); fast=true;
+  }else{
+    efx_alarm.Reset();
+  }
+    
   strip.show();
 
 /*  
