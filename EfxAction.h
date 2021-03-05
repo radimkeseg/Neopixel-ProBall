@@ -17,27 +17,23 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include "EfxAlarm.h"
+#pragma once
 
-//public 
-void EfxAlarm::Show(boolean clear_background, boolean mix_colors){
-  if(strip==NULL) return;
-  
-  if(j>=3) j=0;  
-  
-  for (uint16_t i=0; i < strip->numPixels(); i+=3) {
-    strip->setPixelColor(i+j, color);    //turn every third pixel on
-    strip->setPixelColor((i+j+1)%strip->numPixels(), 0);        //turn other pixel off
-    strip->setPixelColor((i+j+2)%strip->numPixels(), 0);        //turn other third pixel off
-  } 
+#include "ITimer.h"
 
-  j++;
-}
+class EfxAction : virtual public ITimer
+{
+    private:
+      uint16_t j=0;
+      uint32_t color = Adafruit_NeoPixel::Color(0, 127, 127);
 
-void EfxAlarm::SetUp(uint32_t color){
-  this->color = color;
-}
+    public:
+      EfxAction(Adafruit_NeoPixel *strip) : ITimer(strip){}
+      
+      virtual void Show(boolean clear_background, boolean mix_colors);
+      virtual void Show(){ Show(false, false); }
+            
+      virtual void Reset();
 
-void EfxAlarm::Reset(){
-  j = 0;
-}
+      virtual void SetUp(uint32_t color);
+};

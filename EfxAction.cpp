@@ -17,27 +17,25 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include "EfxAlarm.h"
+#include "EfxAction.h"
 
 //public 
-void EfxAlarm::Show(boolean clear_background, boolean mix_colors){
+void EfxAction::Show(boolean clear_background, boolean mix_colors){
   if(strip==NULL) return;
   
-  if(j>=3) j=0;  
+  if(j>1) j=0;  
   
-  for (uint16_t i=0; i < strip->numPixels(); i+=3) {
-    strip->setPixelColor(i+j, color);    //turn every third pixel on
-    strip->setPixelColor((i+j+1)%strip->numPixels(), 0);        //turn other pixel off
-    strip->setPixelColor((i+j+2)%strip->numPixels(), 0);        //turn other third pixel off
-  } 
+  for (uint16_t i=0; i < strip->numPixels(); i++) {
+    strip->setPixelColor(i, j==0 ? color : 0 );    //blink
+  }
 
   j++;
 }
 
-void EfxAlarm::SetUp(uint32_t color){
+void EfxAction::SetUp(uint32_t color){
   this->color = color;
 }
 
-void EfxAlarm::Reset(){
+void EfxAction::Reset(){
   j = 0;
 }

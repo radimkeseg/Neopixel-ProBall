@@ -36,11 +36,13 @@ SOFTWARE.
 #include "embHTML.h"
 #include "ITimer.h"
 #include "Clock.h"
+#include "Interval.h"
 
 #include "EfXRainbow.h"
 #include "EfXSpike.h"
 #include "EfXSpiral.h"
 #include "EfXAlarm.h"
+#include "EfXAction.h"
 
 // HOSTNAME for OTA update
 #define HOSTNAME "WSC-ESP8266-"
@@ -68,6 +70,7 @@ EfxRainbow efx_rainbow(&strip);
 EfxSpike efx_spike(&strip);
 EfxSpiral efx_spiral(&strip);
 EfxAlarm efx_alarm(&strip);
+EfxAction efx_action(&strip);
 
 /*prototypes*/
 void updateData();
@@ -130,6 +133,33 @@ void handle_store_settings(){
   server.send(200, "text/html", "OK");
 }
 
+bool action = false;
+int sec = 0;
+char color[8];
+Interval ActionInterval;
+
+void handle_adhoc_action(){
+  Serial.println("action"); 
+  if(server.arg("color")!=NULL){
+    strncpy(color, server.arg("color").c_str(), 8);
+    efx_action.SetUp( ITimer::hex2rgb( color ) );
+    Serial.print("color: "); Serial.println(color);  
+  }
+
+  if(server.arg("sec")==NULL ){
+    action = false;
+    ActionInterval.set(sec=0);
+  }else{
+    action = true;
+    sec = atoi(server.arg("sec").c_str());
+    ActionInterval.set( sec * 1000 );
+    Serial.print("sec: "); Serial.println(sec);      
+  }
+
+  server.send(200, "text/html", "OK");
+}
+
+
 /**/
 
 // Called if WiFi has not been configured yet
@@ -186,6 +216,7 @@ void setup() {
   //user setting handling
   server.on("/", handle_root);
   server.on("/offset", handle_store_settings);
+  server.on("/action", handle_adhoc_action );
   server.begin(); 
   Serial.println("HTTP server started");
 
@@ -231,9 +262,19 @@ void loop() {
   //effect by alarm
   if(cs.settings.ALARM_SWITCH)
   if(clock.getHourInt() == cs.settings.alarmHour && clock.getMinsInt() == cs.settings.alarmMins){
-    efx_alarm.Show(); delay(10); fast=true;
+    efx_alarm.Show(); delay(50); fast=true;
   }else{
     efx_alarm.Reset();
+  }
+
+  if(action){
+    if(ActionInterval.expired()){
+      action = false;
+    }else{
+      efx_action.Show(); delay(200); fast=true;
+    }
+  }else{
+    efx_action.Reset();
   }
     
   strip.show();

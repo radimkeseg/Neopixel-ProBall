@@ -22,6 +22,14 @@ SOFTWARE.
 uint32_t ITimer::hex2rgb(char* hexstring) {
     if(hexstring==NULL) return 0;
 
+    if(strlen(hexstring)==3){
+      long number = (long) strtol( &hexstring[0], NULL, 16);
+      int r = number >> 8;
+      int g = number >> 4 & 0xF;
+      int b = number & 0xF;
+      return Adafruit_NeoPixel::Color(r+r>>4,g+g>>4,b+b>>4);
+   }
+
     if(strlen(hexstring)==4){
       long number = (long) strtol( &hexstring[1], NULL, 16);
       int r = number >> 8;
@@ -29,6 +37,14 @@ uint32_t ITimer::hex2rgb(char* hexstring) {
       int b = number & 0xF;
       return Adafruit_NeoPixel::Color(r+r>>4,g+g>>4,b+b>>4);
    }
+
+    if(strlen(hexstring)==6){
+      long number = (long) strtol( &hexstring[0], NULL, 16);
+      int r = number >> 16;
+      int g = number >> 8 & 0xFF;
+      int b = number & 0xFF;
+      return Adafruit_NeoPixel::Color(r,g,b);
+    }
 
     if(strlen(hexstring)==7){
       long number = (long) strtol( &hexstring[1], NULL, 16);
